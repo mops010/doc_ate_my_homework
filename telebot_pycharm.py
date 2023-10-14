@@ -1,4 +1,4 @@
-with open('/Users/andreyboriskin/Downloads/Проект_сбер/test_token.txt') as file:
+with open('test_token.txt') as file:
     token = file.readline()
 
 from catboost import CatBoostClassifier
@@ -14,10 +14,10 @@ import seaborn as sns
 # matplotlib.use('Agg')
 
 
-train_df = pd.read_csv('/Users/andreyboriskin/Downloads/Проект_сбер/train_df.csv')
+train_df = pd.read_csv('train_df.csv')
 
 model = CatBoostClassifier()
-model.load_model('/Users/andreyboriskin/Downloads/Проект_сбер/model.cmb')
+model.load_model('model.cmb')
 
 bot = telebot.TeleBot(token)
 
@@ -31,17 +31,23 @@ def show_graphs_beeswarm(data):
     shap.plots.beeswarm(shap_values[:], color=plt.get_cmap("cool"), max_display=20, show=False)
     fig.savefig('beeswarm.png', bbox_inches='tight')
 
-    return f'/Users/andreyboriskin/Downloads/Проект_сбер/beeswarm.png'
+    return 'beeswarm.png'
 
 
-def show_graphs_force(data):
+def show_graphs_force_0(data):
     shap_values = explainer(data)
 
-    fig = plt.gcf()
-    shap.force_plot(shap_values[1, :], matplotlib=True, show=True)
-    fig.savefig('force.png', bbox_inches='tight')
+    shap.force_plot(shap_values[0, :], matplotlib=True, show=False).savefig('force.png', bbox_inches='tight')
 
-    return f'/Users/andreyboriskin/Downloads/Проект_сбер/force.png'
+    return 'force.png'
+
+
+def show_graphs_force_1(data):
+    shap_values = explainer(data)
+
+    shap.force_plot(shap_values[1, :], matplotlib=True, show=False).savefig('force.png', bbox_inches='tight')
+
+    return 'force.png'
 
 
 def model_predict(data, num):
@@ -68,12 +74,11 @@ def handle_docs_photo(message):
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
 
-        src = '/Users/andreyboriskin/Downloads/Проект_сбер' + '/' + message.document.file_name
+        src = message.document.file_name
         with open(src, 'wb') as new_file:
             new_file.write(downloaded_file)
 
-        data = pd.read_csv(
-            '/Users/andreyboriskin/Downloads/Проект_сбер' + '/' + message.document.file_name)
+        data = pd.read_csv(message.document.file_name)
 
         # ls_pred = ''
         #
