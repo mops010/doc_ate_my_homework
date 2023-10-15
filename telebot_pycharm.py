@@ -6,12 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import shap
 import telebot
-import seaborn as sns
-
-# import warnings
-# warnings.simplefilter("ignore", UserWarning)
-
-# matplotlib.use('Agg')
+from pathlib import Path
 
 
 train_df = pd.read_csv('train_df.csv')
@@ -74,23 +69,26 @@ def handle_docs_photo(message):
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
 
-        src = message.document.file_name
-        with open(src, 'wb') as new_file:
-            new_file.write(downloaded_file)
+        if Path(file_info.file_path).suffixes[0] not in ['.csv', '.tsv', '.xlss']:
+            bot.send_message(chat_id, 'Вы отправили файл не табличного вида! Попробуйте снова')
 
-        data = pd.read_csv(message.document.file_name)
+        else:
+            src = message.document.file_name
+            with open(src, 'wb') as new_file:
+                new_file.write(downloaded_file)
 
-        # ls_pred = ''
-        #
-        # for _ in range(con_row(data)):
-        #     ls_pred += f'{_ + 1}) ' + model_predict(data, _) + '\n'
-        # bot.send_message(chat_id, ls_pred)
+            data = pd.read_csv(message.document.file_name)
+            # ls_pred = ''
+            #
+            # for _ in range(con_row(data)):
+            #     ls_pred += f'{_ + 1}) ' + model_predict(data, _) + '\n'
+            # bot.send_message(chat_id, ls_pred)
 
-        img = open(show_graphs_force(data), 'rb')
-        # img1 = open(show_graphs_beeswarm(data), 'rb')
-        # img = open(show_graphs_force(data), 'rb')
-        bot.send_photo(chat_id, img)
-        # bot.send_photo(chat_id, img1)
+            img = open(show_graphs_force_0(data), 'rb')
+            # img1 = open(show_graphs_beeswarm(data), 'rb')
+            # img = open(show_graphs_force(data), 'rb')
+            bot.send_photo(chat_id, img)
+            # bot.send_photo(chat_id, img1)
 
     except Exception as err:
         bot.reply_to(message, err)
