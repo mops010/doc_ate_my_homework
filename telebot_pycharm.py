@@ -8,7 +8,6 @@ import shap
 import telebot
 from pathlib import Path
 
-
 train_df = pd.read_csv('train_df.csv')
 
 model = CatBoostClassifier()
@@ -16,10 +15,9 @@ model.load_model('model.cmb')
 
 bot = telebot.TeleBot(token)
 
-explainer = shap.TreeExplainer(model)
-
 
 def show_graphs_beeswarm(data):
+    explainer = shap.TreeExplainer(model)
     shap_values = explainer(data)
 
     fig = plt.gcf()
@@ -30,6 +28,7 @@ def show_graphs_beeswarm(data):
 
 
 def show_graphs_force_0(data):
+    explainer = shap.TreeExplainer(model)
     shap_values = explainer(data)
 
     shap.force_plot(shap_values[0, :], matplotlib=True, show=False).savefig('force.png', bbox_inches='tight')
@@ -38,6 +37,7 @@ def show_graphs_force_0(data):
 
 
 def show_graphs_force_1(data):
+    explainer = shap.TreeExplainer(model)
     shap_values = explainer(data)
 
     shap.force_plot(shap_values[1, :], matplotlib=True, show=False).savefig('force.png', bbox_inches='tight')
@@ -45,20 +45,12 @@ def show_graphs_force_1(data):
     return 'force.png'
 
 
-def model_predict(data, num):
-    for name in data.columns.values.tolist():
-        data[name] = data[name].astype('int64')
+def send_file_csv_predict(data):
+    data_predict = model.predict(data)
+    data['predict'] = data_predict
+    data.to_csv('data_predict.csv')
 
-    pred = model.predict(data.iloc[[num]])
-
-    if pred == 1:
-        return 'Обязательно доедет!!!'
-
-    return 'Большая веростность, что не доедет((('
-
-
-def con_row(data):
-    return data.shape[0]
+    return open('data_predict.csv', 'rb')
 
 
 @bot.message_handler(content_types=['document'])
@@ -78,17 +70,14 @@ def handle_docs_photo(message):
                 new_file.write(downloaded_file)
 
             data = pd.read_csv(message.document.file_name)
-            # ls_pred = ''
-            #
-            # for _ in range(con_row(data)):
-            #     ls_pred += f'{_ + 1}) ' + model_predict(data, _) + '\n'
-            # bot.send_message(chat_id, ls_pred)
 
-            img = open(show_graphs_force_0(data), 'rb')
+            # img = open(show_graphs_force_0(data), 'rb')
             # img1 = open(show_graphs_beeswarm(data), 'rb')
             # img = open(show_graphs_force(data), 'rb')
-            bot.send_photo(chat_id, img)
+            # bot.send_photo(chat_id, img)
             # bot.send_photo(chat_id, img1)
+            # bot.send_message(chat_id, send_file_csv_predict(data))
+            bot.send_document(chat_id, document=send_file_csv_predict(data))
 
     except Exception as err:
         bot.reply_to(message, err)
