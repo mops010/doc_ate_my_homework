@@ -48,6 +48,7 @@ def send_file_csv_predict(data):
 
     return open('data_predict.csv', 'rb')
 
+
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -58,9 +59,11 @@ def start(message):
                      text="Привет, {0.first_name}! Я помогу тебе предсказать будет ли срыв доставки или нет".format(
                          message.from_user), reply_markup=markup)
 
+
 @bot.message_handler(content_types=['photo'])
 def photo(message):
     bot.send_message(message.chat.id, text="Картинка недопустима")
+
 
 @bot.message_handler(content_types=['text', 'photo'])
 def func(message):
@@ -92,6 +95,8 @@ def func(message):
                     # bot.send_photo(chat_id, img)
                     # bot.send_photo(chat_id, img1)
                     # bot.send_message(chat_id, send_file_csv_predict(data))
+                    bot.send_message(message.chat.id,
+                                     text='В вашем файле добавляется ещё один столбец, в каждой строчке будет предикт на вашу строчку.\n1 - положительный результат, 0 - отрицательный результат')
                     bot.send_document(message.chat.id, document=send_file_csv_predict(data))
                     bot.send_message(message.chat.id, text="Хотите посмотреть графики на основе вашего датасета ?",
                                      reply_markup=markup)
@@ -105,7 +110,7 @@ def func(message):
                         # Отправляем сообщение
                         bot.send_message(callback_query.message.chat.id,
                                          '1: Beeswarm - График показывающий, какие функции наиболее важны для модели. На графике будут показаны объекты которые сортируются по сумме величин значений SHAP по всем выборкам и используются значения SHAP, чтобы показать распределение влияния каждого объекта на выходные данные модели. Цвет представляет значение функции (красный максимум, синий минимум).\n' +
-                                         '2: Force - В приведенном графике показаны функции, которые способствуют преобразованию выходных данных модели из базового значения (средний результат модели по переданному нами набору обучающих данных) к выходным данным модели. Функции, повышающие прогноз, показаны красным, а те, которые повышают прогноз, — синим.',
+                                         '2: Force - В приведенном графике показаны функции, которые способствуют преобразованию выходных данных модели из базового значения (средний результат модели по переданному нами набору обучающих данных) к выходным данным модели. Функции, повышающие прогноз, показаны красным, а те, которые понижают прогноз, — синим.',
                                          reply_markup=keyboard)
 
                     @bot.callback_query_handler(func=lambda call: call.data == 'bee')
