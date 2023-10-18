@@ -55,39 +55,42 @@ def show_graphs_force_0(data):
 
 
 def justification_of_the_predict(data, message_text):
-    shap_values = explainer(data)[int(message_text)]
-    most_important = np.argmax(shap_values.abs.values)
-    data_predict = model.predict(data)
-    if data_predict[int(message_text)] == 1:
-        return 'Доставка будет вовремя'
-    if data.columns[most_important] in cat_features:
-        if data.columns[most_important] == "Поставщик":
-            return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значения: 930, 1253 или 1126. Это самые надежные поставщики'
-        if data.columns[most_important] == "Операционный менеджер":
-            return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значение 36. Это самые результативный оператов'
-        if data.columns[most_important] == "День недели 2":
-            return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значение 6. Советуем делать заказ в этот день'
+    if int(message_text) >len(data):
+        return 'Введите ,пожалуйста, существующий индекс вашего датасета'
     else:
-        if shap_values.values[most_important] > 0:
-            if data.columns[most_important] == "Длительность":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 49 дней'
-            if data.columns[most_important] == "Количество позиций":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 14'
-            if data.columns[most_important] == "Количество изменений после согласований":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 16 изменений соглосований'
-            if data.columns[most_important] == "До поставки":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 48'
-            return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}, значение фича слишком большое'
+        shap_values = explainer(data)[int(message_text)]
+        most_important = np.argmax(shap_values.abs.values)
+        data_predict = model.predict(data)
+        if data_predict[int(message_text)] == 1:
+            return 'Доставка будет вовремя'
+        if data.columns[most_important] in cat_features:
+            if data.columns[most_important] == "Поставщик":
+                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значения: 930, 1253 или 1126. Это самые надежные поставщики'
+            if data.columns[most_important] == "Операционный менеджер":
+                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значение 36. Это самые результативный оператов'
+            if data.columns[most_important] == "День недели 2":
+                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. Если вас не устраивает значение, то советуем заменить его на значение 6. Советуем делать заказ в этот день'
         else:
-            if data.columns[most_important] == "Длительность":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 49 дней'
-            if data.columns[most_important] == "Количество изменений после согласований":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 16 изменений соглосований'
-            if data.columns[most_important] == "Количество позиций":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 14'
-            if data.columns[most_important] == "До поставки":
-                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 48'
-            return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}, значение фича слишком маленькое'
+            if shap_values.values[most_important] > 0:
+                if data.columns[most_important] == "Длительность":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 49 дней'
+                if data.columns[most_important] == "Количество позиций":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 14'
+                if data.columns[most_important] == "Количество изменений после согласований":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 16 изменений соглосований'
+                if data.columns[most_important] == "До поставки":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 48'
+                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}, значение фича слишком большое'
+            else:
+                if data.columns[most_important] == "Длительность":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 49 дней'
+                if data.columns[most_important] == "Количество изменений после согласований":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела должно быть около 16 изменений соглосований'
+                if data.columns[most_important] == "Количество позиций":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 14'
+                if data.columns[most_important] == "До поставки":
+                    return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}. В среднем для того, чтобы доставка успела значение должно быть около 48'
+                return f'Модель выдаёт такой результат в большей степени из-за фича {data.columns[most_important]}, значение фича слишком маленькое'
 
 
 URL = 'https://api.telegram.org/bot'
@@ -150,10 +153,16 @@ def func(message):
                     markup.add(btn3)
                     bot.send_message(message.chat.id, text='Хотите узнать основную причину предикта?',
                                      reply_markup=markup)
-
                     def digit(message):
                         if message.text.isdigit():
-                            bot.send_message(message.chat.id, justification_of_the_predict(data, message.text))
+                            markup = types.InlineKeyboardMarkup()
+                            btn3 = types.InlineKeyboardButton(text='Хотите узнать причину предикта по другой строке ?', callback_data='DA1')
+                            markup.add(btn3)
+                            bot.send_message(message.chat.id, justification_of_the_predict(data, message.text), reply_markup=markup)
+                            markup = types.InlineKeyboardMarkup()
+                            btn3 = types.InlineKeyboardButton(text='Да', callback_data='DA')
+                            markup.add(btn3)
+                            bot.send_message(message.chat.id,text='Хотите посмотреть графики на основе вашего датасета ?',reply_markup=markup)
 
                     @bot.callback_query_handler(func=lambda call: call.data == 'DA1')
                     def handle_trials(callback_query):
@@ -184,7 +193,11 @@ def func(message):
                         bot.send_message(callback_query.message.chat.id,
                                          'График Beeswarm: (вывод может занять некоторое время)')
                         bot.send_photo(message.chat.id, photo=show_graphs_beeswarm(data), reply_markup=markup)
-
+                        markup = types.InlineKeyboardMarkup()
+                        btn3 = types.InlineKeyboardButton(text='Да', callback_data='DA1')
+                        markup.add(btn3)
+                        bot.send_message(message.chat.id, text='Хотите узнать основную причину предикта?',
+                                         reply_markup=markup)
                     @bot.callback_query_handler(func=lambda call: call.data == 'force')
                     def force(callback_query):
                         btn1 = types.InlineKeyboardButton(text='Вернуться к графикам', callback_data='DA')
@@ -193,9 +206,13 @@ def func(message):
                         bot.send_message(callback_query.message.chat.id,
                                          'График Force: (вывод может занять некоторое время)')
                         bot.send_photo(message.chat.id, photo=show_graphs_force_0(data), reply_markup=markup)
-
+                        markup = types.InlineKeyboardMarkup()
+                        btn3 = types.InlineKeyboardButton(text='Да', callback_data='DA1')
+                        markup.add(btn3)
+                        bot.send_message(message.chat.id, text='Хотите узнать основную причину предикта?',
+                                         reply_markup=markup)
             except Exception as err:
-                bot.send_message(message.chat.id, str(err))
+                bot.send_message(message.chat.id, err)
 
 
     elif (message.text == 'Аналитическая система'):
@@ -218,11 +235,19 @@ def func(message):
         bot.send_message(message.chat.id, text='Вы вернулись в главное меню', reply_markup=markup)
     elif (message.text == 'Немного аналитики'):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        btn1 = types.KeyboardButton('НАДО ПРИДУМАТЬ')
+        btn1 = types.KeyboardButton('Рекомендации пользователям')
         btn2 = types.KeyboardButton('Аналитика данных')
         back = types.KeyboardButton('Вернуться в главное меню')
         markup.add(btn1, btn2, back)
         bot.send_message(message.chat.id, text='Что именно вы хотите узнать?', reply_markup=markup)
+    elif (message.text == 'Рекомендации пользователям'):
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn2 = types.KeyboardButton('Аналитическая система')
+        back = types.KeyboardButton('Вернуться в главное меню')
+        markup.add(btn2, back)
+        bot.send_message(message.chat.id,
+                         text='В наш чат-бот встроенна систем рекомендаций к заказу, которая помогает вам подобрать наилучшие параметры для вашего заказа, которые могут увеличить шанс на успешную доставку в сроки. Мы ,проанализировав датасет, нашли наилучшие параметры и на их основе составляем рекомендации для пользователя. Для категориальных фичей мы подобрали лучшие признаки, а для числовых фичей усредненные значения.',
+                         reply_markup=markup)
     elif (message.text == 'Аналитика данных'):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn2 = types.KeyboardButton('Аналитическая система')
@@ -241,7 +266,6 @@ def func(message):
                          text='На этом графике мы можем наглядно увидеть, насколько важен каждый фич для нашей модели',
                          reply_markup=markup)
         send_photo_file(message.chat.id, 'features_importans')
-
 
 if __name__ == "__main__":
     bot.polling(none_stop=True)
