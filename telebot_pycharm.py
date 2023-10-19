@@ -55,7 +55,7 @@ def show_graphs_force_0(data):
 
 
 def justification_of_the_predict(data, message_text):
-    if int(message_text) >len(data):
+    if int(message_text) > len(data):
         return 'Введите ,пожалуйста, существующий индекс вашего датасета'
     else:
         shap_values = explainer(data)[int(message_text)]
@@ -153,16 +153,21 @@ def func(message):
                     markup.add(btn3)
                     bot.send_message(message.chat.id, text='Хотите узнать основную причину предикта?',
                                      reply_markup=markup)
+
                     def digit(message):
                         if message.text.isdigit():
                             markup = types.InlineKeyboardMarkup()
-                            btn3 = types.InlineKeyboardButton(text='Хотите узнать причину предикта по другой строке ?', callback_data='DA1')
+                            btn3 = types.InlineKeyboardButton(text='Хотите узнать причину предикта по другой строке ?',
+                                                              callback_data='DA1')
                             markup.add(btn3)
-                            bot.send_message(message.chat.id, justification_of_the_predict(data, message.text), reply_markup=markup)
+                            bot.send_message(message.chat.id, justification_of_the_predict(data, message.text),
+                                             reply_markup=markup)
                             markup = types.InlineKeyboardMarkup()
                             btn3 = types.InlineKeyboardButton(text='Да', callback_data='DA')
                             markup.add(btn3)
-                            bot.send_message(message.chat.id,text='Хотите посмотреть графики на основе вашего датасета ?',reply_markup=markup)
+                            bot.send_message(message.chat.id,
+                                             text='Хотите посмотреть графики на основе вашего датасета ?',
+                                             reply_markup=markup)
 
                     @bot.callback_query_handler(func=lambda call: call.data == 'DA1')
                     def handle_trials(callback_query):
@@ -198,6 +203,7 @@ def func(message):
                         markup.add(btn3)
                         bot.send_message(message.chat.id, text='Хотите узнать основную причину предикта?',
                                          reply_markup=markup)
+
                     @bot.callback_query_handler(func=lambda call: call.data == 'force')
                     def force(callback_query):
                         btn1 = types.InlineKeyboardButton(text='Вернуться к графикам', callback_data='DA')
@@ -256,7 +262,7 @@ def func(message):
         bot.send_message(message.chat.id,
                          text='Чтобы срыв доставки не случился важно знать, какие стобцы имеют наибольшую важнось для предотвращения срыва. Мы проанализировали данные и предоставляем вам график который поможет вам принять верное решение.',
                          reply_markup=markup)
-        send_photo_file(message.chat.id, 'features_importans')
+        send_photo_file(message.chat.id, 'features_importans.jpg')
     elif (message.text == 'Ценность фича'):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton('Вернуться к графикам')
@@ -265,7 +271,8 @@ def func(message):
         bot.send_message(message.chat.id,
                          text='На этом графике мы можем наглядно увидеть, насколько важен каждый фич для нашей модели',
                          reply_markup=markup)
-        send_photo_file(message.chat.id, 'features_importans')
+        send_photo_file(message.chat.id, 'eatures_importans.jpg')
+
 
 if __name__ == "__main__":
     bot.polling(none_stop=True)
